@@ -29,27 +29,33 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '20'
         distribution: 'temurin'
-    - name: Build and Package
+    - name: Build Uber Jar
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      with:
+        arguments: packageUberJarForCurrentOS
+    - name: Build Native distribution
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: packageDistributionForCurrentOS
+    - name: Archive artefacts (jars)
+      uses: actions/upload-artifact@v3
+      with:
+        name: uber-jars
+        path: build/compose/jars
     - name: Archive artefacts (windows)
       uses: actions/upload-artifact@v3
       with:
         name: windows-binaries
-        path: |
-            build/compose/binaries/main/msi
+        path: build/compose/binaries/main/msi
     - name: Archive artefacts (linux)
       uses: actions/upload-artifact@v3
       with:
         name: linux-binaries
-        path: |
-            build/compose/binaries/main/deb
+        path: build/compose/binaries/main/deb
     - name: Archive artefacts (macos)
       uses: actions/upload-artifact@v3
       with:
         name: macos-binaries
-        path: |
-            build/compose/binaries/main/dmg
+        path: build/compose/binaries/main/dmg
