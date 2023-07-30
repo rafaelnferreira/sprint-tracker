@@ -39,22 +39,22 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: packageDistributionForCurrentOS
-    - name: Archive artefacts (jars)
+    - name: Archive artifacts (jars)
       uses: actions/upload-artifact@v3
       with:
         name: uber-jars
         path: build/compose/jars
-    - name: Archive artefacts (windows)
+    - name: Archive artifacts (windows)
       uses: actions/upload-artifact@v3
       with:
         name: windows-binaries
         path: build/compose/binaries/main/msi
-    - name: Archive artefacts (linux)
+    - name: Archive artifacts (linux)
       uses: actions/upload-artifact@v3
       with:
         name: linux-binaries
         path: build/compose/binaries/main/deb
-    - name: Archive artefacts (macos)
+    - name: Archive artifacts (macos)
       uses: actions/upload-artifact@v3
       with:
         name: macos-binaries
