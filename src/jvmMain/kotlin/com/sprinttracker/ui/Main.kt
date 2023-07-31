@@ -13,11 +13,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.sprinttracker.ui.components.MainView
-import org.slf4j.LoggerFactory
 
 fun main() = application {
-
-    val logger = LoggerFactory.getLogger("Main")
 
     var isOpen by remember { mutableStateOf(true) }
 
@@ -43,20 +40,15 @@ fun main() = application {
         }
     )
 
-    try {
-        Window(
-            title = "Sprint Time Tracker",
-            state = WindowState(size = DpSize(960.dp, 640.dp)),
-            visible = isOpen,
-            onCloseRequest = { isOpen = false },
-            resizable = false,
-            icon = MyAppIcon,
-        ) {
-            MainView(onNotification = { trayState.sendNotification(it) }, onExit = ::exitApplication)
-        }
-    } catch (e: Exception) {
-        logger.error("Uncaught error, terminating", e)
-        throw e
+    Window(
+        title = "Sprint Time Tracker",
+        state = WindowState(size = DpSize(960.dp, 640.dp)),
+        visible = isOpen,
+        onCloseRequest = { isOpen = false },
+        resizable = false,
+        icon = MyAppIcon,
+    ) {
+        MainView(onNotification = { trayState.sendNotification(it) }, onExit = ::exitApplication)
     }
 
 }
