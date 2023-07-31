@@ -50,7 +50,6 @@ fun main() = application {
     ) {
         MainView(onNotification = { trayState.sendNotification(it) }, onExit = ::exitApplication)
     }
-
 }
 
 object MyAppIcon : Painter() {
