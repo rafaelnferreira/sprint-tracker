@@ -24,8 +24,6 @@ class TimeTrackingServiceFacade(
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    private val adoTimeTrackingService = ADOTimeTrackingService(configuration)
-
     suspend fun refresh(replaceConfig: Configuration? = null) = coroutineScope {
         logger.debug("Refresh triggered / new config? {}", replaceConfig != null)
         replaceConfig?.let { c -> configuration = c }
@@ -57,7 +55,7 @@ class TimeTrackingServiceFacade(
                     onWorkItemsLoaded(workItems, totalHoursLoggedToday)
                 }
 
-            }
+            }.invokeOnCompletion { it?.cause?.run { logger.error("find failed", this) } }
             onWorkItemsLoading()
         }
 
@@ -66,6 +64,7 @@ class TimeTrackingServiceFacade(
     suspend fun saveTimeEntries(entries: List<TimeEntry>) = coroutineScope {
         logger.info("Saving {} time entries for date: {}", entries.size, LocalDate.now())
         launch {
+            val adoTimeTrackingService = ADOTimeTrackingService(configuration)
 
             // just to allow a UI refresh
             delay(1.seconds)
@@ -81,11 +80,11 @@ class TimeTrackingServiceFacade(
             // refresh and notify completion
             findWorkItemsToEntryTime()
             onTimeEntriesSaving(TimeEntrySaveSate.COMPLETE)
-        }
+        }.invokeOnCompletion { it?.cause?.run { logger.error("save failed", this) } }
         onTimeEntriesSaving(TimeEntrySaveSate.SAVING)
     }
 
-    private fun findWorkItemsInSprint(): List<WorkItem> = adoTimeTrackingService.findWorkItemsInIteration()
+    private fun findWorkItemsInSprint(): List<WorkItem> = ADOTimeTrackingService(configuration).findWorkItemsInIteration()
         .filter { it.type == WorkItemType.USER_STORY || it.type == WorkItemType.BUG }
         .map { maybeCreateFakeChild(it) }
         .sortedBy { it.type }

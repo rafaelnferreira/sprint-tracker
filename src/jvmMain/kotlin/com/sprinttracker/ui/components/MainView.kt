@@ -67,7 +67,6 @@ fun MainView(onNotification: (Notification) -> Unit, onExit: () -> Unit) {
     )
 
     LaunchedEffect(Unit) {
-
         scheduleRefresh(coroutineScope, timeTrackingService)
 
         timeTrackingService.findWorkItemsToEntryTime()
