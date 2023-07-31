@@ -73,8 +73,6 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
             Pair("Microsoft.VSTS.Scheduling.CompletedWork", completedWork)
         )
         webApi.workItemTrackingApi.updateWorkItem(entry.workItem.id.toInt(), fields)
-
-
     }
 
     private fun createWorkItemGraph(
@@ -94,9 +92,16 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
             // process parent / child relationship
             val maybeParent = adoWorkItem.parentId?.let { parentId ->
 
+                logger.debug("Processing parentId: {} for work item: {}", parentId, adoWorkItem.id)
+
+                fun lazyCreateParent(): WorkItem {
+                    val p = adoWorkItems.find { it.id == parentId }?.let { crateWorkItem(it) }
+                    return p ?: WorkItem(parentId.toLong(), WorkItemType.USER_STORY, "", "New", 0.0, 0.0, null, null)
+                }
+
                 val parentWorkItem = buffer.getOrDefault(
                     parentId,
-                    crateWorkItem(currentADOWorkItems.find { it.id == parentId }!!)
+                    lazyCreateParent()
                 ) withChild workItem
 
                 buffer[parentId] = parentWorkItem
@@ -119,7 +124,7 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
     private fun ADOWorkItem.otherFieldAsDouble(name: String): Double =
         this.fields.otherFields[name].let { value -> if (value == null) 0.0 else value as Double }
 
-    private fun crateWorkItem(adoWorkItem: ADOWorkItem, parent: WorkItem? = null): WorkItem {
+    private fun crateWorkItem(adoWorkItem: ADOWorkItem): WorkItem {
         return WorkItem(
             adoWorkItem.id.toLong(),
             when (adoWorkItem.fields.systemWorkItemType) {
@@ -132,7 +137,7 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
             adoWorkItem.fields.systemState,
             adoWorkItem.otherFieldAsDouble("Microsoft.VSTS.Scheduling.CompletedWork"),
             adoWorkItem.otherFieldAsDouble("Microsoft.VSTS.Scheduling.RemainingWork"),
-            parent,
+            null,
             null
         )
     }
