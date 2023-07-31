@@ -37,6 +37,7 @@ compose.desktop {
     application {
         mainClass = "com.sprinttracker.ui.MainKt"
         nativeDistributions {
+            modules("java.naming")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "sprint-tracker"
             packageVersion = "1.0.0"
