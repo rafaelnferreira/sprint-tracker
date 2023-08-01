@@ -19,7 +19,7 @@ data class Configuration(
 }
 
 enum class WorkItemType {
-    FEATURE, USER_STORY, TASK, BUG
+    EPIC, FEATURE, USER_STORY, TASK, BUG
 }
 
 data class WorkItem(

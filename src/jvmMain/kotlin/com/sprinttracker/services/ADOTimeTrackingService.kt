@@ -96,7 +96,7 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
 
                 fun lazyCreateParent(): WorkItem {
                     val p = adoWorkItems.find { it.id == parentId }?.let { crateWorkItem(it) }
-                    return p ?: WorkItem(parentId.toLong(), WorkItemType.USER_STORY, "", "New", 0.0, 0.0, null, null)
+                    return p ?: WorkItem(parentId.toLong(), WorkItemType.EPIC, "[Work item $parentId", "New", 0.0, 0.0, null, null)
                 }
 
                 val parentWorkItem = buffer.getOrDefault(
