@@ -28,9 +28,9 @@ data class SelectableWorkItem(val selected: Boolean, val workItem: WorkItem)
 private const val HOUR_INCREMENT = 0.5
 private const val ZERO = 0.0
 
-data class TimeEntryInput(val hours: String, val workItem: WorkItem, val burn: Boolean = true) {
+data class TimeEntryInput(val hours: String, val workItem: WorkItem, val burn: Boolean = true, val closeWorkItem: Boolean = false) {
 
-    fun toTimeEntry(): TimeEntry = TimeEntry(hoursAsDouble() ?: ZERO, workItem, burn)
+    fun toTimeEntry(): TimeEntry = TimeEntry(hoursAsDouble() ?: ZERO, workItem, burn, closeWorkItem)
 
     fun isError(): Boolean = (hoursAsDouble() ?: ZERO) < HOUR_INCREMENT
 
@@ -143,10 +143,10 @@ fun TimeTrackingConfirm(workItems: List<WorkItem>, isSaving: Boolean, hoursLogge
 
         Column(modifier = Modifier.height(400.dp).verticalScroll(state = rememberScrollState())) {
             timeEntries.forEach {
-                WorkItemTimeEntry(it) { hours, burn ->
+                WorkItemTimeEntry(it) { hours, burn, closeWorkItem ->
                     timeEntries = timeEntries.replaceElement(
                         predicate = { elem -> it.workItem isSame elem.workItem },
-                        supplier = { TimeEntryInput(hours, it.workItem, burn) }
+                        supplier = { TimeEntryInput(hours, it.workItem, burn, closeWorkItem) }
                     )
                 }
             }
@@ -252,7 +252,7 @@ private fun WorkItemSelection(item: SelectableWorkItem, selectionChange: (select
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun WorkItemTimeEntry(timeEntry: TimeEntryInput, onEntryChanged: (hours: String, burn: Boolean) -> Unit) {
+private fun WorkItemTimeEntry(timeEntry: TimeEntryInput, onEntryChanged: (hours: String, burn: Boolean, closeWorkItem: Boolean) -> Unit) {
     val workItem = timeEntry.workItem
     val (icon, tint) = workItem.iconColorPair()
     ListItem(
@@ -273,27 +273,27 @@ private fun WorkItemTimeEntry(timeEntry: TimeEntryInput, onEntryChanged: (hours:
 }
 
 @Composable
-private fun TimeEntryCapture(timeEntry: TimeEntryInput, onEntryChanged: (hours: String, burn: Boolean) -> Unit) {
+private fun TimeEntryCapture(timeEntry: TimeEntryInput, onEntryChanged: (hours: String, burn: Boolean, closeWorkItem: Boolean) -> Unit) {
 
     val inputValue = TextFieldValue(timeEntry.hours)
 
     Row {
         TextField(
             value = inputValue,
-            onValueChange = { onEntryChanged(it.text, timeEntry.burn)},
+            onValueChange = { onEntryChanged(it.text, timeEntry.burn, timeEntry.closeWorkItem)},
             modifier = Modifier.width(96.dp).padding(8.dp).align(Alignment.CenterVertically),
             singleLine = true,
             label = { Text("Hours") },
             isError = timeEntry.isError()
         )
-        TextButton(onClick = {onEntryChanged(timeEntry.plusOneHour(), timeEntry.burn)}, modifier = Modifier.align(Alignment.CenterVertically)) {
+        TextButton(onClick = {onEntryChanged(timeEntry.plusOneHour(), timeEntry.burn, timeEntry.closeWorkItem)}, modifier = Modifier.align(Alignment.CenterVertically)) {
             Icon(
                 painterResource(Res.drawable.ic_plus),
                 contentDescription = null,
                 modifier = Modifier.padding(end = 4.dp)
             )
         }
-        TextButton(onClick = {onEntryChanged(timeEntry.minusOneHour(), timeEntry.burn)}, modifier = Modifier.align(Alignment.CenterVertically)) {
+        TextButton(onClick = {onEntryChanged(timeEntry.minusOneHour(), timeEntry.burn, timeEntry.closeWorkItem)}, modifier = Modifier.align(Alignment.CenterVertically)) {
             Icon(
                 painterResource(Res.drawable.ic_minus),
                 contentDescription = null,
@@ -309,7 +309,13 @@ private fun TimeEntryCapture(timeEntry: TimeEntryInput, onEntryChanged: (hours: 
         Checkbox(
             modifier = Modifier.align(Alignment.CenterVertically),
             checked = timeEntry.burn,
-            onCheckedChange = { onEntryChanged(timeEntry.hours, !timeEntry.burn) }
+            onCheckedChange = { onEntryChanged(timeEntry.hours, !timeEntry.burn, timeEntry.closeWorkItem) }
+        )
+        Text("Close", modifier = Modifier.align(Alignment.CenterVertically))
+        Checkbox(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            checked = timeEntry.closeWorkItem,
+            onCheckedChange = { onEntryChanged(timeEntry.hours, timeEntry.burn, !timeEntry.closeWorkItem) }
         )
     }
 }

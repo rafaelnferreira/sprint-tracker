@@ -30,7 +30,7 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
 
         // analytics API can retrieve everything in a single query, future improvement.
         val query =
-            "Select [System.Id] From WorkItems Where [System.IterationPath] = @currentIteration('[${configuration.project}]\\${configuration.team}') and [System.AssignedTo] = @Me"
+            "Select [System.Id] From WorkItems Where [System.IterationPath] = @currentIteration('[${configuration.project}]\\${configuration.team}') and [System.AssignedTo] = @Me and [System.State] != 'Closed'"
         logger.debug("Built query: {}", query)
 
         val result = wit.queryByWiql(configuration.team, query)
@@ -68,10 +68,12 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
             completedWork,
             remainingWork
         )
-        val fields = mapOf<String, Any>(
+        val fields = mutableMapOf<String, Any>(
             Pair("Microsoft.VSTS.Scheduling.RemainingWork", remainingWork),
             Pair("Microsoft.VSTS.Scheduling.CompletedWork", completedWork)
         )
+            .takeIf { entry.closeWorkItem }?.apply { this["System.State"] = "Closed" }
+
         webApi.workItemTrackingApi.updateWorkItem(entry.workItem.id.toInt(), fields)
     }
 
@@ -96,7 +98,16 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
 
                 fun lazyCreateParent(): WorkItem {
                     val p = adoWorkItems.find { it.id == parentId }?.let { crateWorkItem(it) }
-                    return p ?: WorkItem(parentId.toLong(), WorkItemType.EPIC, "[Work item $parentId", "New", 0.0, 0.0, null, null)
+                    return p ?: WorkItem(
+                        parentId.toLong(),
+                        WorkItemType.EPIC,
+                        "[Work item $parentId",
+                        "New",
+                        0.0,
+                        0.0,
+                        null,
+                        null
+                    )
                 }
 
                 val parentWorkItem = buffer.getOrDefault(

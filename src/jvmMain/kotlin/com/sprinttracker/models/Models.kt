@@ -75,8 +75,9 @@ data class TimeEntry(
     val hours: Double,
     val workItem: WorkItem,
     val burn: Boolean = true,
+    val closeWorkItem: Boolean = false,
     val date: LocalDate = LocalDate.now(),
-    val expectedNumOfHoursTrackedPerDay: Int = EXPECTED_NUMBER_OF_TRACKED_HOURS_PER_DAY
+    val expectedNumOfHoursTrackedPerDay: Int = EXPECTED_NUMBER_OF_TRACKED_HOURS_PER_DAY,
 ) {
     fun toPersistable() = PersistableTimeEntry(hours, workItem.id, burn, date)
 

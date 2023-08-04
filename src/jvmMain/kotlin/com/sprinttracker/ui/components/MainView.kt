@@ -130,20 +130,20 @@ private fun scheduleRefresh(
     coroutineScope: CoroutineScope,
     timeTrackingService: TimeTrackingServiceFacade
 ) {
-    val tomorrowAt0950AM = LocalDateTime.now().plusDays(1).withHour(9).withMinute(50).withSecond(0)
-    val nextRefresh = Date.from(tomorrowAt0950AM.toInstant(OffsetDateTime.now().offset))
-    val oneDayInMilliseconds = 24 * 60 * 60 * 1000
+    val twoHoursFromNow = LocalDateTime.now().plusHours(2)
+    val nextRefresh = Date.from(twoHoursFromNow.toInstant(OffsetDateTime.now().offset))
+    val twoHoursInMilliseconds = 2 * 60 * 60 * 1000
 
     logger.info(
         "Scheduled auto refresh to trigger at: {} - with a recurring period of {} milliseconds",
         nextRefresh,
-        oneDayInMilliseconds
+        twoHoursInMilliseconds
     )
 
     Timer().schedule(
         timerTask {
             coroutineScope.launch { timeTrackingService.refresh() }
         },
-        nextRefresh, oneDayInMilliseconds.toLong()
+        nextRefresh, twoHoursInMilliseconds.toLong()
     )
 }
