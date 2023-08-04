@@ -72,7 +72,9 @@ internal class ADOTimeTrackingService(private val configuration: Configuration) 
             Pair("Microsoft.VSTS.Scheduling.RemainingWork", remainingWork),
             Pair("Microsoft.VSTS.Scheduling.CompletedWork", completedWork)
         )
-            .takeIf { entry.closeWorkItem }?.apply { this["System.State"] = "Closed" }
+        if (entry.closeWorkItem){
+             fields["System.State"] = "Closed"
+        }
 
         webApi.workItemTrackingApi.updateWorkItem(entry.workItem.id.toInt(), fields)
     }
