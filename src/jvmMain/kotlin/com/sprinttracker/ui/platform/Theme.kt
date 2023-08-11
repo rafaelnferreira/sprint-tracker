@@ -51,7 +51,7 @@ fun AppTheme(
 ) {
 
     MaterialTheme(
-        colors = DarkOrangeColorPalette,
+        colors = DarkBlueColorPalette,
         content = content
     )
 }
