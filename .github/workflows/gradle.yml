@@ -22,7 +22,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v3
@@ -42,26 +42,36 @@ jobs:
     - name: Archive artifacts (window-uber-jars)
       uses: actions/upload-artifact@v3
       with:
-        name: uber-jar-windows
+        name: windows-uber-jar
         path: build/compose/jars/*windows*.jar
+        if-no-files-found: ignore
     - name: Archive artifacts (windows)
       uses: actions/upload-artifact@v3
       with:
-        name: windows-binaries
+        name: windows-native
         path: build/compose/binaries/main/msi
+        if-no-files-found: ignore
     - name: Archive artifacts (linux-uber-jars)
       uses: actions/upload-artifact@v3
       with:
-        name: uber-jar-linux
+        name: linux-uber-jar
         path: build/compose/jars/*linux*.jar
+        if-no-files-found: ignore
     - name: Archive artifacts (linux)
       uses: actions/upload-artifact@v3
       with:
-        name: linux-binaries
+        name: linux-native
         path: build/compose/binaries/main/deb
+        if-no-files-found: ignore
+    - name: Archive artifacts (macos-uber-jars)
+      uses: actions/upload-artifact@v3
+      with:
+        name: macos-uber-jar
+        path: build/compose/jars/*macos*.jar
+        if-no-files-found: ignore
     - name: Archive artifacts (macos)
       uses: actions/upload-artifact@v3
       with:
-        name: macos-binaries
+        name: macos-native
         path: build/compose/binaries/main/dmg
         if-no-files-found: ignore
