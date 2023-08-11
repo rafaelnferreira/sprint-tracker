@@ -29,12 +29,12 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '20'
+        java-version: '18'
         distribution: 'temurin'
     - name: Build Uber Jar
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
-        arguments: packageUberJarForCurrentOS
+        arguments: packageReleaseUberJarForCurrentOS
     - name: Build Native distribution
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
