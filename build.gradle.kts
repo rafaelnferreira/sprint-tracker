@@ -37,7 +37,8 @@ compose.desktop {
     application {
         mainClass = "com.sprinttracker.ui.MainKt"
         nativeDistributions {
-            modules("java.naming")
+            // https://github.com/JetBrains/compose-multiplatform/tree/master/tutorials/Native_distributions_and_local_execution#configuring-included-jdk-modules
+            includeAllModules = true
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "sprint-tracker"
             packageVersion = "1.0.0"
