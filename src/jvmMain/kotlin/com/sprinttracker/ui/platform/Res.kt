@@ -3,6 +3,7 @@ package com.sprinttracker.ui.platform
 object Res {
     object drawable {
         val ic_app_logo = "drawable/applogo.xml"
+        val ic_home = "drawable/home.xml"
         val ic_config = "drawable/config.xml"
         val ic_exit = "drawable/exit.xml"
         val ic_bug = "drawable/bug.xml"

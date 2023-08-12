@@ -71,7 +71,7 @@ fun ConfigurationComponent(configuration: Configuration, onSaveConfiguration: (C
 
             if (showSnackBar) {
                 Snackbar(modifier = Modifier.fillMaxWidth().padding(vertical = 64.dp) ) {
-                    Text(text = "Configuration saved")
+                    Text(text = "Configuration saved, click 'Home' to start.")
                 }
             }
         }

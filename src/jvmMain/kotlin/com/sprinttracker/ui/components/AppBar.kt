@@ -16,7 +16,7 @@ fun AppBar(configurationComplete: Boolean, onPageChange: (Pages) -> Unit, onExit
         elevation = 8.dp,
         navigationIcon = {
             IconButton(onClick = {onPageChange(Pages.INPUT)}, enabled = configurationComplete) {
-                Icon(painterResource(Res.drawable.ic_app_logo), contentDescription = "Time Tracker")
+                Icon(painterResource(Res.drawable.ic_home), contentDescription = "Home")
             }
         },
         actions = {
